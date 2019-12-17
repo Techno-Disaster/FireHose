@@ -1,4 +1,5 @@
 import requests
+import json
 from datetime import datetime
 from bs4 import BeautifulSoup
 
@@ -9,8 +10,8 @@ def firehose():
     ts_duplicate_counter = 1
     while True:
         r = requests.get(
-            "https://www.meneame.net/backend/sneaker2")
-        data = r.json()  # we get data here.
+            "https://www.meneame.net/backend/sneaker2").content
+        data = json.loads(r)  # we get data here.
 
         listofdata = data["events"]
         reverselist = listofdata[::-1]  # to reverse the list
@@ -38,11 +39,15 @@ def output(event):
     action = event["type"]
     vote_comments = str(event["votes"]) + "/" + str(event["com"])
     title = event["title"]
-
     ret = str(BeautifulSoup("{} | {:<10} | {:<10} | {:<8} | {}"
                             .format(time, sub_name, action, vote_comments, title,), 'html.parser'))
 
     print(ret)
+
+    # for row in data['event']['data']:
+
+    #     data = (time, sub_name, vote_comments, title, action)
+    #     dataframe.append(data)
 
 
 if __name__ == "__main__":
